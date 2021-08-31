@@ -1,7 +1,7 @@
 const express = require('express')
 const exphbs = require('express-handlebars');
 const app = express()
-const port = 5000
+const port = process.env.PORT || 5000
 
 // Configure template Engine and Main Template File
 app.engine('hbs', exphbs({

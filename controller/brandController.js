@@ -1,10 +1,10 @@
 let controller = {};
 let models = require('../models');
-let Category = models.Category;
+let brand = models.Brand;
 
 controller.getAll = () => {
     return new Promise((resolve, reject) =>{
-        Category.findAll({
+        brand.findAll({
             include: [{model: models.Product}],
             attributes: ['id', 'name', 'imagepath', 'summary']
         }).then(data => resolve(data))
@@ -14,3 +14,4 @@ controller.getAll = () => {
 };
 
 module.exports = controller;
+

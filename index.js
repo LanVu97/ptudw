@@ -18,7 +18,7 @@ app.set('view engine', 'hbs');
 
 // routes
 app.use('/', require('./routes/indexRouter'));
-
+app.use('/products', require('./routes/productRouter'));
 
 
 app.get('/sync', (req, res) => {

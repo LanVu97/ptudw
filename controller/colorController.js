@@ -1,12 +1,12 @@
 let controller = {};
 let models = require('../models');
-let Category = models.Category;
+let color = models.Color;
 
 controller.getAll = () => {
     return new Promise((resolve, reject) =>{
-        Category.findAll({
-            include: [{model: models.Product}],
-            attributes: ['id', 'name', 'imagepath', 'summary']
+        color.findAll({
+            include: [{model: models.ProductColor}],
+            attributes: ['id', 'name', 'imagepath', 'code']
         }).then(data => resolve(data))
         .catch(error => reject(new Error(error)));
     });
@@ -14,3 +14,4 @@ controller.getAll = () => {
 };
 
 module.exports = controller;
+

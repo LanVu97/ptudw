@@ -6,14 +6,28 @@ const port = process.env.PORT || 5000
 // Configure template Engine and Main Template File
 app.engine('hbs', exphbs({
   defaultLayout: 'layout',
+  runtimeOptions:{
+    allowProtoPropertiesByDefault: true,
+    allowProtoMethodsByDefault: true,
+  },
   extname: '.hbs'
 }));
 // Setting template Engine
 app.set('view engine', 'hbs');
 
+
 // routes
-app.get('/', (req, res) => {
-  res.render('index');
+app.use('/', require('./routes/indexRouter'));
+
+
+
+app.get('/sync', (req, res) => {
+  let models = require('./models');
+  models.sequelize.sync()
+  .then(()=>(
+    res.send('database sync completed')
+  ));
+  
 });
 app.get('/:page', (req, res) => {
   var banner = {
@@ -33,6 +47,7 @@ app.get('/:page', (req, res) => {
   var page = req.params.page;
   res.render(page, {banner: banner[page]});
 });
+
 
 
 app.use('/', express.static('public'))

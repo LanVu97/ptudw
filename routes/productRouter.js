@@ -27,4 +27,16 @@ router.get('/', (req,res, next) =>{
     
 } )
 
+router.get('/:id',(req,res, next) =>{
+    let productController = require('../controller/productController');
+    productController.getById(req.params.id)
+    .then(data =>{
+
+        res.locals.product = data;       
+        res.render('single-product');
+    })
+  
+    .catch(error => next(error));
+    
+} )
 module.exports = router;

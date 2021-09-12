@@ -1,5 +1,6 @@
 const express = require('express')
 const exphbs = require('express-handlebars');
+let helper = require('./controller/helper');
 const app = express()
 const port = process.env.PORT || 5000
 
@@ -10,7 +11,11 @@ app.engine('hbs', exphbs({
     allowProtoPropertiesByDefault: true,
     allowProtoMethodsByDefault: true,
   },
-  extname: '.hbs'
+  extname: '.hbs',
+  helpers: {
+    createStarList: helper.createStarList,
+    createStar: helper.createStar
+  }
 }));
 // Setting template Engine
 app.set('view engine', 'hbs');

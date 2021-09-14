@@ -18,8 +18,8 @@
                 <form action="#">
                   <ul>
                     {{#each categories}}
-                    <li class="filter-list"><input class="pixel-radio" type="radio" id="men"
-                     name="brand"><label for="men">{{name}}<span> ({{Products.length}})</span></label></li>
+                    <li class="filter-list"><input class="pixel-radio" type="radio" id="category{{id}}"
+                     name="brand"><label for="category{{id}}" onclick="selectParam('category',{{id}}, true)">{{name}}<span> ({{Products.length}})</span></label></li>
                     {{/each}}
                   </ul>
                 </form>
@@ -34,7 +34,7 @@
                 <ul>
                   {{#each brandes}}
                   <li class="filter-list"><input class="pixel-radio" type="radio"
-                   id="apple" name="brand"><label for="apple">{{name}}<span>({{Products.length}})</span></label></li>
+                   id="brand{{id}}" name="brand"><label for="brand{{id}}" onclick="selectParam('brand','{{id}}')">{{name}}<span>({{Products.length}})</span></label></li>
                   {{/each}}
                 </ul>
               </form>
@@ -44,8 +44,8 @@
               <form action="#">
                 <ul>
                   {{#each colors}}
-                  <li class="filter-list"><input class="pixel-radio" type="radio" id="black"
-                   name="color"><label for="black">{{name}}<span>({{ProductColors.length}})</span></label></li>
+                  <li class="filter-list"><input class="pixel-radio" type="radio" id="color{{id}}"
+                   name="color"><label for="color{{id}}" onclick="selectParam('color','{{id}}')">{{name}}<span>({{ProductColors.length}})</span></label></li>
                  {{/each}}
                 </ul>
               </form>
@@ -266,4 +266,40 @@
 	<!-- ================ Subscribe section end ================= -->		  
 
 
- 
+ <script>
+
+  let searchParams = new URLSearchParams(location.search);
+  let params ={
+    category: 0,
+    brand: 0,
+    color: 0,
+    min: 0,
+    max: 100
+  }
+  for (let key in params) {
+     if(!searchParams.has(key)){
+       searchParams.append(key, params[key]);
+     }
+     
+  }
+  for(let key in params){
+    let control = $(`#${key}${searchParams.get(key)}`);
+    if(control){
+      $(control).prop("checked", true);
+    }
+  }
+
+  
+   function selectParam(key, value, reset = false){
+     if(reset){
+       for(let key in params){
+         searchParams.set(key,params[key]);
+       }
+     }
+     
+     searchParams.set(key,value);
+     
+     let url = `/products?${searchParams.toString()}`;
+     location.href = url
+   }
+ </script>

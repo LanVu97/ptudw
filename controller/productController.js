@@ -1,7 +1,7 @@
 let controller = {};
 let models = require('../models');
 let Product = models.Product;
-
+const { Op } = require("sequelize");
 controller.getTrendingProduct = () => {
     return new Promise((resolve, reject) =>{
         Product.findAll({
@@ -10,17 +10,38 @@ controller.getTrendingProduct = () => {
             include: [{model: models.Category}],
             attributes: ['id', 'name', 'imagepath', 'price']
         }).then(data => resolve(data))
-        .catch(err => reject(new Error(error)));
+        .catch(error => reject(new Error(error)));
     }); 
 };
 
-controller.getAll = () => {
+controller.getAll = (query) => {
+    let option = {          
+        include: [{model: models.Category}],
+        attributes: ['id', 'name', 'imagepath', 'price'],
+        where: {
+            price: {
+                [Op.lt]: query.max,
+                [Op.gt]: query.min
+              }
+        }
+    } ;
+    if(query.category > 0){
+        option.where.categoryId = query.category;
+    }
+    if(query.brand > 0){
+        option.where.brandId = query.brand;
+    }
+    if(query.color > 0){
+        option.include =[{
+            model: models.ProductColor,
+            where: {colorId: query.color}
+        }]
+    }
+
     return new Promise((resolve, reject) =>{
-        Product.findAll({          
-            include: [{model: models.Category}],
-            attributes: ['id', 'name', 'imagepath', 'price']
-        }).then(data => resolve(data))
-        .catch(err => reject(new Error(error)));
+        Product.findAll(option).
+        then(data => resolve(data))
+        .catch(error => reject(new Error(error)));
     }); 
 };
 

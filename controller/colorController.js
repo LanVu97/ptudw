@@ -1,13 +1,34 @@
 let controller = {};
 let models = require('../models');
 let color = models.Color;
-
-controller.getAll = () => {
+const { Op } = require("sequelize");
+controller.getAll = (query) => {
     return new Promise((resolve, reject) =>{
-        color.findAll({
-            include: [{model: models.ProductColor}],
-            attributes: ['id', 'name', 'imagepath', 'code']
-        }).then(data => resolve(data))
+        let option = {
+            include: [{
+                model: models.ProductColor,
+                include : [{
+                    model: models.Product,
+                    attributes: [],
+                    where: {
+                        price: {
+                            [Op.lt]: query.max,
+                            [Op.gt]: query.min
+                          }
+                    }
+                }]
+            }],
+            attributes: ['id', 'name', 'imagepath','code'],
+            
+        };
+        if(query.category > 0){
+            option.include[0].include[0].where.categoryId = query.category
+        }
+        if(query.brand > 0){
+            option.include[0].include[0].where.brandId = query.brand
+        }
+        color.findAll(option)
+        .then(data => resolve(data))
         .catch(error => reject(new Error(error)));
     });
   

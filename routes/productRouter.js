@@ -1,8 +1,9 @@
+const { query } = require('express');
 var express = require('express');
 var router = express.Router();
 
 router.get('/', (req,res, next) =>{
-    if(req.query.category == null || isNaN(req.query.category)){
+    if((req.query.category == null) || isNaN(req.query.category)){
         req.query.category = 0;
     }
     if(req.query.brand == null || isNaN(req.query.brand)){
@@ -17,9 +18,22 @@ router.get('/', (req,res, next) =>{
     if(req.query.max == null || isNaN(req.query.max)){
         req.query.max = 100;
     }
-
+   
+    if(req.query.limit == null || isNaN(req.query.limit) || req.query.limit.trim() == ''){
+        req.query.limit = 9;
+    }
+    if(req.query.sort == null || req.query.sort.trim() == ''){
+        req.query.sort = 'name';
+    }
+    if(req.query.page == null || isNaN(req.query.page) ||  req.query.page.trim() == ''){
+        req.query.page = 1;
+    }
+    if((req.query.search == null)|| req.query.search.trim() ==''){
+        req.query.search = '';
+    }
+    console.log(req.query.search.trim());
     let categoryController = require('../controller/categoryController');
-    categoryController.getAll()
+    categoryController.getAll(req.query)
     .then(data => {
         res.locals.categories = data;    
         let brandController = require('../controller/brandController');
@@ -34,8 +48,12 @@ router.get('/', (req,res, next) =>{
         return productController.getAll(req.query);
         
     }).then(data =>{
-        res.locals.products = data;
-       
+        res.locals.products = data.rows;
+        res.locals.pagination = {
+            page: req.query.page, // có thể dùng thêm intPasre()
+            limit: req.query.limit,
+            totalRows: data.count
+        }
         res.render('category');
     })
   

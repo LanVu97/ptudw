@@ -32,14 +32,43 @@ controller.getAll = (query) => {
         option.where.brandId = query.brand;
     }
     if(query.color > 0){
-        option.include =[{
-            model: models.ProductColor,
-            where: {colorId: query.color}
-        }]
+        //
+        option.include.push(
+            {
+                model: models.ProductColor,
+                where: {colorId: query.color}
+            }
+        ) 
+    }
+    if(query.sort){
+        switch(query.sort){
+            // case 'name':
+            //     option.order = [['name', 'ASC']];
+            //     break;
+            case 'price':
+                option.order = [['price', 'ASC']];
+                break;
+            case 'overallReview':
+                option.order = [['overallReview', 'DESC']];
+                break;
+            default:
+                option.order = [['name', 'ASC']]
+        }
+        
+    }
+    if(query.limit > 0){
+        option.limit = query.limit;
+        console.log(query.page);
+        option.offset = (query.page -1) * query.limit;        
+    }
+    if(query.search != ''){
+        option.where.name = {
+            [Op.iLike]: `%${query.search.trim()}%`
+        }        
     }
 
     return new Promise((resolve, reject) =>{
-        Product.findAll(option).
+        Product.findAndCountAll(option).
         then(data => resolve(data))
         .catch(error => reject(new Error(error)));
     }); 

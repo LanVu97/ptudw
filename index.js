@@ -31,7 +31,7 @@ app.use(bp.urlencoded({ extended: true }))
 app.use('/', require('./routes/indexRouter'));
 app.use('/products', require('./routes/productRouter'));
 app.use('/comment', require('./routes/commentRouter'));
-
+app.use('/review', require('./routes/reviewRouter'));
 
 app.get('/sync', (req, res) => {
   let models = require('./models');

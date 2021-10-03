@@ -19,19 +19,19 @@ router.get('/', (req,res, next) =>{
         req.query.max = 100;
     }
    
-    if(req.query.limit == null || isNaN(req.query.limit) || req.query.limit.trim() == ''){
+    if(req.query.limit == null || isNaN(req.query.limit) ){
         req.query.limit = 9;
     }
-    if(req.query.sort == null || req.query.sort.trim() == ''){
+    if(req.query.sort == null ){
         req.query.sort = 'name';
     }
-    if(req.query.page == null || isNaN(req.query.page) ||  req.query.page.trim() == ''){
+    if(req.query.page == null || isNaN(req.query.page) ){
         req.query.page = 1;
     }
     if((req.query.search == null)|| req.query.search.trim() ==''){
         req.query.search = '';
     }
-    console.log(req.query.search.trim());
+    
     let categoryController = require('../controller/categoryController');
     categoryController.getAll(req.query)
     .then(data => {
@@ -50,7 +50,7 @@ router.get('/', (req,res, next) =>{
     }).then(data =>{
         res.locals.products = data.rows;
         res.locals.pagination = {
-            page: req.query.page, // có thể dùng thêm intPasre()
+            page: parseInt(req.query.page), 
             limit: req.query.limit,
             totalRows: data.count
         }

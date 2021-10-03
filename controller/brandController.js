@@ -6,15 +6,19 @@ controller.getAll = (query) => {
     
     return new Promise((resolve, reject) =>{
         let option = {
-            include: [{model: models.Product,
+            attributes: ['id', 'name', 'imagepath'],
+            include: [{
+                model: models.Product,
+                attributes: ['id'],
                 where: {
                     price: {
-                        [Op.lt]: query.max,
-                        [Op.gt]: query.min
+                        [Op.gte]: query.min,
+                        [Op.lte]: query.max,
+                       
                       }
                 } 
             }],
-            attributes: ['id', 'name', 'imagepath', 'summary'],
+            
             
         };
         if(query.category > 0){
@@ -23,12 +27,13 @@ controller.getAll = (query) => {
         if(query.color > 0){
             option.include[0].include = [{
                 model: models.ProductColor,
+                attributes: [],
                 where: {colorId: query.color}
             }]
         }
         if(query.search != ''){
             option.include[0].where.name = {
-                [Op.iLike]: `%${query.search.trim()}%`
+                [Op.iLike]: `%${query.search}%`
             }        
         }
         brand.findAll(option).then(data => resolve(data))

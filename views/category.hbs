@@ -71,9 +71,9 @@
           <div class="filter-bar d-flex flex-wrap align-items-center">
             <div class="sorting">
               <select id="sort" onchange="selectParam('sort', this.value)">
-                <option value="name">Sorting by name</option>
+                <option value="name"> Default sorting by name</option>
                 <option value="price">Sorting by price from low to high</option>
-                <option value="overallReview">Sorting by review from high to low</option>
+                <option value="overallReview">Sorting by reviews from high to low</option>
               </select>
             </div>
             <div  class="sorting mr-auto">
@@ -84,15 +84,18 @@
               </select>
             </div>
             <div>
-              <form action="/products" method="get" >
-              <div class="input-group filter-bar-search">
-                
+              
+              
+                <form action="/products" method="get" >
+                  <div class="input-group filter-bar-search">
                     <input type="text" placeholder="Search" name='search' >
                     <div class="input-group-append">
-                    <button type="button"><i class="ti-search"></i></button>
+                    <button type="submit"><i class="ti-search"></i></button>
                     </div>
-              </div>
-              </form>
+                  </div>
+                </form>
+              
+              
             </div>
           </div>
           <!-- End Filter Bar -->
@@ -125,7 +128,7 @@
          <div class="row justify-content-center">
         <nav aria-label="Page navigation example" id="pagination">
   
-          {{{createPagination pagination}}}
+          {{{createPagination pagination paginationClass="pagination"}}}
     
         </nav>
     </div>
@@ -292,36 +295,41 @@
     max: 100,
     page: 1,
     limit: 9,
-    sort: 'name'
+    sort: 'name',
+    search: ''
   }
+  // khoi tao tat ca cac param cho searchParams
   for (let key in params) {
      if(!searchParams.has(key)){
        searchParams.append(key, params[key]);
      }
      
   }
-  {{!-- $(document).ready(() =>{ --}}
-     let checkbox = ['category', 'brand', 'color']
-  for(let key of checkbox){
+  
+   $(document).ready(() =>{
+    // thiet lap trang thai cho cac checkbox browse ans filter
+     let checkboxes = ['category', 'brand', 'color']
+  for(let key of checkboxes){
     let control = $(`#${key}${searchParams.get(key)}`);
     if(control){
       $(control).prop("checked", true);
     }
   }
+  // thiet lap trang thai cocombox sort va limit
   $( "#sort" ).val( searchParams.get('sort') );
 $( "#limit" ).val(searchParams.get('limit'));
+// thiet lap trang thai va duong dan href cho cac link cua pagination
   $( "#pagination li" ).addClass('page-item');
   $( "#pagination li a" ).addClass('page-link');
   let savePage = searchParams.get('page');
   $( "#pagination li a" ).each((index, item) =>{
     let page = $(item).attr('href').split('=')[1];
     searchParams.set('page', page);
-    let href = '/products?' + searchParams.toString();
-    
+    let href = '/products?' + searchParams.toString();    
     $(item).attr('href',href);
   })
   searchParams.set('page', savePage);
-  {{!-- }) --}}
+  }) 
  
    function selectParam(key, value, reset = false){
      if(reset){

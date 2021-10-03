@@ -5,6 +5,7 @@ const { Op } = require("sequelize");
 controller.getAll = (query) => {
     return new Promise((resolve, reject) =>{
         let option = {
+            attributes: ['id', 'name', 'imagepath','code'],
             include: [{
                 model: models.ProductColor,
                 include : [{
@@ -12,13 +13,14 @@ controller.getAll = (query) => {
                     attributes: [],
                     where: {
                         price: {
-                            [Op.lt]: query.max,
-                            [Op.gt]: query.min
+                            [Op.gte]: query.min,
+                            [Op.lte]: query.max
+                            
                           }
                     }
                 }]
             }],
-            attributes: ['id', 'name', 'imagepath','code'],
+            
             
         };
         if(query.category > 0){
@@ -29,7 +31,7 @@ controller.getAll = (query) => {
         }
         if(query.search != ''){
             option.include[0].include[0].where.name = {
-                [Op.iLike]: `%${query.search.trim()}%`
+                [Op.iLike]: `%${query.search}%`
             }        
         }
         color.findAll(option)

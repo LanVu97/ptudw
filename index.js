@@ -1,9 +1,11 @@
 const express = require('express')
 const exphbs = require('express-handlebars');
 let helper = require('./controller/helper');
+var paginateHelper = require('express-handlebars-paginate');
+
 const app = express()
 const port = process.env.PORT || 5000
-var paginateHelper = require('express-handlebars-paginate');
+
 // Configure template Engine and Main Template File
 app.engine('hbs', exphbs({
   defaultLayout: 'layout',

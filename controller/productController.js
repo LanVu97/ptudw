@@ -15,13 +15,15 @@ controller.getTrendingProduct = () => {
 };
 
 controller.getAll = (query) => {
+    return new Promise((resolve, reject) =>{
     let option = {          
         include: [{model: models.Category}],
-        attributes: ['id', 'name', 'imagepath', 'price'],
+        attributes: ['id', 'name', 'imagepath', 'price', 'categoryId'],
         where: {
             price: {
-                [Op.lt]: query.max,
-                [Op.gt]: query.min
+                [Op.gte]: query.min,
+                [Op.lte]: query.max,
+                
               }
         }
     } ;
@@ -36,15 +38,16 @@ controller.getAll = (query) => {
         option.include.push(
             {
                 model: models.ProductColor,
+                attributes: [],
                 where: {colorId: query.color}
             }
         ) 
     }
     if(query.sort){
         switch(query.sort){
-            // case 'name':
-            //     option.order = [['name', 'ASC']];
-            //     break;
+            case 'name':
+                option.order = [['name', 'ASC']];
+                break;
             case 'price':
                 option.order = [['price', 'ASC']];
                 break;
@@ -58,16 +61,15 @@ controller.getAll = (query) => {
     }
     if(query.limit > 0){
         option.limit = query.limit;
-        console.log(query.page);
+        
         option.offset = (query.page -1) * query.limit;        
     }
     if(query.search != ''){
         option.where.name = {
-            [Op.iLike]: `%${query.search.trim()}%`
+            [Op.iLike]: `%${query.search}%`
         }        
     }
 
-    return new Promise((resolve, reject) =>{
         Product.findAndCountAll(option).
         then(data => resolve(data))
         .catch(error => reject(new Error(error)));

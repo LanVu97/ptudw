@@ -22,11 +22,15 @@ app.engine('hbs', exphbs({
 }));
 // Setting template Engine
 app.set('view engine', 'hbs');
-
+//req.body for post
+const bp = require('body-parser')
+app.use(bp.json())
+app.use(bp.urlencoded({ extended: true }))
 
 // routes
 app.use('/', require('./routes/indexRouter'));
 app.use('/products', require('./routes/productRouter'));
+app.use('/comment', require('./routes/commentRouter'));
 
 
 app.get('/sync', (req, res) => {
